@@ -26,7 +26,27 @@ export class ProductsService {
         { $sort: { createdAt: -1 } },
         { $skip: pageSize * pageIndex },
         { $limit: pageSize },
-        { $project: { _id: false, thumbnail: false } },
+        {
+          $addFields: {
+            category: { $toObjectId: '$category' },
+          },
+        },
+        {
+          $lookup: {
+            from: 'categories',
+            localField: 'category',
+            foreignField: '_id',
+            as: 'category',
+          },
+        },
+        {
+          $project: { thumbnail: false },
+        },
+        {
+          $addFields: {
+            category: { $arrayElemAt: ['$category', 0] },
+          },
+        },
       ])
       .exec();
 
