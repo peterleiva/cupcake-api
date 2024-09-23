@@ -12,7 +12,7 @@ export class ProductsService {
 
   async getAll(
     { pageIndex = 0, pageSize = PaginationConst.PAGE_SIZE }: Partial<Page> = {},
-    categoryID?: string
+    categoryID?: string,
   ): Promise<PagedResult<Product>> {
     const total = await this.model.countDocuments().exec();
     const products = await this.model
