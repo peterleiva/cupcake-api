@@ -28,13 +28,19 @@ export class ProductsController {
     @Query('page') pageIndex: number,
     @Query('limit') pageSize: number,
     @Query('category') categoryID: string,
+    @Query('favorites', {
+      transform: (value) => (value === 'true' || value === '1' ? true : false),
+    })
+    favorites: boolean,
+    @Query('searchterm')
+    searchterm?: string,
   ) {
     return this.service.getAll(
+      { category: categoryID, favorites, searchterm },
       {
         pageIndex: +pageIndex || 0,
         pageSize: +pageSize || PaginationConst.PAGE_SIZE,
       },
-      categoryID,
     );
   }
 

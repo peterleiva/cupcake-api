@@ -33,6 +33,12 @@ export class Product {
     ref: Category.name,
   })
   category: Category;
+
+  @Prop({
+    type: Boolean,
+    default: false,
+  })
+  favorite: boolean;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

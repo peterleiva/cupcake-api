@@ -11,17 +11,29 @@ export class ProductsService {
   constructor(@InjectModel(Product.name) private model: ProductModel) {}
 
   async getAll(
+    {
+      category = '',
+      favorites,
+      searchterm,
+    }: { category?: string; favorites: boolean; searchterm?: string },
     { pageIndex = 0, pageSize = PaginationConst.PAGE_SIZE }: Partial<Page> = {},
-    categoryID?: string,
   ): Promise<PagedResult<Product>> {
     const total = await this.model.countDocuments().exec();
     const products = await this.model
       .aggregate([
         {
           $match:
-            categoryID && isValidObjectId(categoryID)
-              ? { category: categoryID }
-              : {},
+            category && isValidObjectId(category) ? { category: category } : {},
+        },
+        {
+          $match: {
+            favorite: favorites || { $in: [false, null, true] },
+          },
+        },
+        {
+          $match: {
+            name: new RegExp(searchterm ?? '', 'ig'),
+          },
         },
         { $sort: { createdAt: -1 } },
         { $skip: pageSize * pageIndex },
