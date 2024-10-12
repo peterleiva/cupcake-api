@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   FileTypeValidator,
   Get,
   MaxFileSizeValidator,
@@ -73,5 +74,15 @@ export class ProductsController {
     const imageBuffer = await this.service.getImage(id);
 
     return res.send(imageBuffer);
+  }
+
+  @Post(':id/favorite')
+  addToFavorite(@Param('id') id: string) {
+    return this.service.addToFavorite(id);
+  }
+
+  @Delete(':id/favorite')
+  removeFromFavorite(@Param('id') id: string) {
+    return this.service.removeFromFavorite(id);
   }
 }

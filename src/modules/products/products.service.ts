@@ -77,15 +77,7 @@ export class ProductsService {
   }
 
   async uploadImage(id: string, file: Express.Multer.File) {
-    if (!isValidObjectId(id)) {
-      throw new HttpException('Invalid product ID', HttpStatus.BAD_REQUEST);
-    }
-
-    const product = await this.model.findById(id);
-
-    if (!product) {
-      throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
-    }
+    const product = await this.getProduct(id);
 
     product.thumbnail = file.buffer;
     await product.save();
@@ -105,5 +97,34 @@ export class ProductsService {
     }
 
     return product.thumbnail;
+  }
+
+  addToFavorite(id: string): Promise<void> {
+    return this.setFavorite(id, true);
+  }
+
+  removeFromFavorite(id: string): Promise<void> {
+    return this.setFavorite(id, false);
+  }
+
+  private async setFavorite(id: string, favorite: boolean) {
+    const product = await this.getProduct(id);
+    product.favorite = favorite;
+
+    await product.save();
+  }
+
+  private async getProduct(id: string) {
+    if (!isValidObjectId(id)) {
+      throw new HttpException('Invalid product ID', HttpStatus.BAD_REQUEST);
+    }
+
+    const product = await this.model.findById(id).exec();
+
+    if (!product) {
+      throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+    }
+
+    return product;
   }
 }
