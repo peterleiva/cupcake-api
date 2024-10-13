@@ -52,9 +52,6 @@ export class ProductsService {
           },
         },
         {
-          $project: { thumbnail: false },
-        },
-        {
           $addFields: {
             category: { $arrayElemAt: ['$category', 0] },
           },
@@ -68,7 +65,12 @@ export class ProductsService {
       total,
       lastPage: Math.ceil(total / pageSize),
       isFinalPage: pageSize * (pageIndex + 1) >= total,
-      data: products,
+      data: products.map((p) => ({
+        ...p,
+        thumbnail: p.thumbnail
+          ? `data:image/jpeg;base64,${p.thumbnail?.toString('base64')}`
+          : undefined,
+      })),
     };
   }
 
@@ -77,7 +79,7 @@ export class ProductsService {
   }
 
   async uploadImage(id: string, file: Express.Multer.File) {
-    const product = await this.getProduct(id);
+    const product = await this.getProductById(id);
 
     product.thumbnail = file.buffer;
     await product.save();
@@ -96,25 +98,14 @@ export class ProductsService {
       throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
     }
 
+    if (!product.thumbnail) {
+      throw new HttpException('Image not found', HttpStatus.NOT_FOUND);
+    }
+
     return product.thumbnail;
   }
 
-  addToFavorite(id: string): Promise<void> {
-    return this.setFavorite(id, true);
-  }
-
-  removeFromFavorite(id: string): Promise<void> {
-    return this.setFavorite(id, false);
-  }
-
-  private async setFavorite(id: string, favorite: boolean) {
-    const product = await this.getProduct(id);
-    product.favorite = favorite;
-
-    await product.save();
-  }
-
-  private async getProduct(id: string) {
+  async getProductById(id: string) {
     if (!isValidObjectId(id)) {
       throw new HttpException('Invalid product ID', HttpStatus.BAD_REQUEST);
     }
@@ -126,5 +117,20 @@ export class ProductsService {
     }
 
     return product;
+  }
+
+  addToFavorite(id: string): Promise<void> {
+    return this.setFavorite(id, true);
+  }
+
+  removeFromFavorite(id: string): Promise<void> {
+    return this.setFavorite(id, false);
+  }
+
+  private async setFavorite(id: string, favorite: boolean) {
+    const product = await this.getProductById(id);
+    product.favorite = favorite;
+
+    await product.save();
   }
 }

@@ -9,12 +9,10 @@ import {
   ParseFilePipe,
   Post,
   Query,
-  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Response } from 'express';
 
 import { PaginationConst } from '../../shared/pagination';
 import { ProductDTO } from './products.interface';
@@ -45,6 +43,11 @@ export class ProductsController {
     );
   }
 
+  @Get(':id')
+  getById(@Param('id') id: string) {
+    return this.service.getProductById(id);
+  }
+
   @Post()
   create(@Body() data: ProductDTO) {
     return this.service.create(data);
@@ -69,11 +72,10 @@ export class ProductsController {
   }
 
   @Get(':id/image')
-  async getImage(@Param('id') id: string, @Res() res: Response) {
-    res.type('image/jpeg');
+  async getImage(@Param('id') id: string) {
     const imageBuffer = await this.service.getImage(id);
 
-    return res.send(imageBuffer);
+    return 'data:image/jpeg;base64' + imageBuffer.toString('base64');
   }
 
   @Post(':id/favorite')
