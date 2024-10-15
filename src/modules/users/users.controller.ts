@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { UsersService } from './users.service';
 import type { CreateUsersDTO } from './interfaces';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
@@ -12,7 +12,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  getById(id: number) {
+  getById(id: string) {
     return this.service.getUser(id);
   }
 
