@@ -7,6 +7,6 @@ import { SecurityController } from './security.controller';
   imports: [AuthModule],
   controllers: [SecurityController],
   providers: [],
-  exports: [],
+  exports: [AuthModule],
 })
 export class SecurityModule {}

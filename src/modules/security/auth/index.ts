@@ -1,4 +1,4 @@
 export * from './auth.guard';
 export * from './auth.module';
 export * from './auth.service';
-export * from './user.decorator';
+export * from './auth.decorator';
