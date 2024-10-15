@@ -1,15 +1,11 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
-import { Request } from 'express';
-import { UsersService } from '../users/users.service';
-import { AuthGuard } from './auth.guard';
-import { AuthService } from './auth.service';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+
+import { UserDocument } from '../users/schemas';
+import { AuthGuard, AuthService, User } from './auth';
 
 @Controller()
 export class SecurityController {
-  constructor(
-    private auth: AuthService,
-    private userService: UsersService,
-  ) {}
+  constructor(private auth: AuthService) {}
 
   @Post('login')
   login(@Body('email') email: string, @Body('password') password: string) {
@@ -17,8 +13,8 @@ export class SecurityController {
   }
 
   @UseGuards(AuthGuard)
-  @Get('me')
-  me(@Req() req: Request) {
-    return req.user;
+  @Get('profile')
+  me(@User() user: UserDocument) {
+    return user;
   }
 }
