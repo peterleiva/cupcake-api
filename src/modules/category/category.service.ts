@@ -1,18 +1,13 @@
-import {
-  HttpCode,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Category } from './schema/category';
 import { Model } from 'mongoose';
 import { CreateCategoryDTO } from './category.dto';
+import { Category } from './schema/category';
 
 @Injectable()
 export class CategoryService {
   constructor(
-    @InjectModel(Category.name) private categoryModel: Model<Category>
+    @InjectModel(Category.name) private categoryModel: Model<Category>,
   ) {}
 
   async getAll() {

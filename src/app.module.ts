@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CategoryModule } from './modules/category';
-import { ProductsModule } from './modules/products/products.module';
+import { ProductsModule } from './modules/products';
+import { SecurityModule } from './modules/security';
+import { UsersModule } from './modules/users';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { ProductsModule } from './modules/products/products.module';
     }),
     CategoryModule,
     ProductsModule,
+    UsersModule,
+    SecurityModule,
   ],
   controllers: [AppController],
   providers: [AppService],
