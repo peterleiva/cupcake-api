@@ -11,7 +11,7 @@ import { Request } from 'express';
 
 import { UsersService } from '../../users';
 
-@Injectable({})
+@Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
